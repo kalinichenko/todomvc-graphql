@@ -1,0 +1,13 @@
+coverage
+dist
+searchbar
+data/test
+webpack.config.js
+styleguide.config.js
+
+# store state fixtures for the tests
+states.js
+
+# next entries should be enabled in the future
+track.js
+utils

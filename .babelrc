@@ -1,0 +1,8 @@
+{
+  "plugins": [
+    "@babel/plugin-syntax-object-rest-spread"
+  ],
+  "presets": ["react", "env"],
+  "sourceMaps": true,
+  "retainLines": true
+}
