@@ -1,4 +1,7 @@
-import { GraphQLObjectType } from 'graphql';
+import {
+  GraphQLObjectType,
+  GraphQLList,
+} from 'graphql';
 
 import {
   TodoList,
@@ -9,7 +12,7 @@ export default new GraphQLObjectType({
   name: 'Query',
   fields: {
     todoList: {
-      type: TodoList,
+      type: new GraphQLList(TodoList),
       args: {
       },
       resolve: todoListResolver,

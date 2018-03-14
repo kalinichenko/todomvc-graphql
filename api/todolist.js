@@ -5,6 +5,7 @@ import {
   GraphQLBoolean,
   GraphQLInt,
 } from 'graphql';
+import todos from './fakedb';
 
 export const TodoList = new GraphQLObjectType({
   name: 'TodoList',
@@ -18,10 +19,6 @@ export const TodoList = new GraphQLObjectType({
 // it's here just to emulate any async service
 export function resolver(root, args) {
   return new Promise(resolve => {
-    resolve({
-      id: 0,
-      title: 'title',
-      completed: false,
-    });
+    resolve(todos);
   });
 }
