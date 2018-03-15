@@ -3,14 +3,13 @@ import {
   GraphQLNonNull,
   GraphQLString,
   GraphQLBoolean,
-  GraphQLInt,
 } from 'graphql';
 import todos from './fakedb';
 
 export const TodoList = new GraphQLObjectType({
   name: 'TodoList',
   fields: {
-    id: { type: new GraphQLNonNull(GraphQLInt) },
+    id: { type: new GraphQLNonNull(GraphQLString) },
     title: { type: new GraphQLNonNull(GraphQLString) },
     completed: { type: new GraphQLNonNull(GraphQLBoolean) },
   },

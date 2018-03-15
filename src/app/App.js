@@ -2,6 +2,7 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import styled from 'styled-components';
 import NewTodo from './NewTodo';
+import Todo from './Todo';
 import { TodoListQuery } from './queries';
 
 const Title = styled.h1`
@@ -23,21 +24,6 @@ const Todos = styled.ul`
   list-style-type: none;
 `;
 
-const Todo = styled.li`
-  font-size: 24px;
-  border-bottom: 1px solid #ededed;
-  position: relative;
-`;
-
-const TodoLabel = styled.label`
-  white-space: pre-line;
-  word-break: break-all;
-  padding: 15px 60px 15px 15px;
-  margin-left: 45px;
-  display: block;
-  line-height: 1.2;
-`;
-
 const App = () => (
   <Query query={TodoListQuery}>
     {({ loading, error, data }) => {
@@ -51,9 +37,7 @@ const App = () => (
             <NewTodo />
           </header>
           <MainSection>
-            <Todos>{data.todoList.map(todo =>
-              <Todo key={todo.id}><TodoLabel>{todo.title}</TodoLabel></Todo>)}
-            </Todos>
+            <Todos>{data.todoList.map(todo => <Todo key={todo.id} {...todo} />)}</Todos>
           </MainSection>
         </React.Fragment>
       );

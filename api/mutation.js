@@ -2,10 +2,11 @@ import {
   GraphQLNonNull,
   GraphQLString,
   GraphQLObjectType,
+  GraphQLList,
 } from 'graphql';
 
 import { TodoList } from './todolist';
-import { addTodo } from './fakedb';
+import { addTodo, removeTodo } from './fakedb';
 
 export default new GraphQLObjectType({
   name: 'TodoMutation',
@@ -17,6 +18,15 @@ export default new GraphQLObjectType({
       },
       resolve: (_, { title }) => {
         return addTodo(title);
+      },
+    },
+    removeTodo: {
+      type: new GraphQLList(TodoList),
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: (_, { id }) => {
+        return removeTodo(id);
       },
     },
   },
