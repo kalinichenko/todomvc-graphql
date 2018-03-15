@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { compose, withStateHandlers, withHandlers } from 'recompose';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { TodoListQuery } from './queries';
@@ -29,47 +29,47 @@ const TodoMutation = gql`
   }
 `;
 
-class NewTodo extends React.Component {
-  state = { newTodo: '' };
+const NewTodo = ({ onTodoKeyDown, onTodoChange, newTodo }) => (
+  <NewTodoInput
+    placeholder="What needs to be done?"
+    onKeyDown={onTodoKeyDown}
+    onChange={onTodoChange}
+    autoFocus
+    value={newTodo}
+  />
+);
 
-  handleNewTodoKeyDown = event => {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      const val = this.state.newTodo.trim();
+const changeTodo = ({ newTodo }) => newTodo => ({ newTodo });
 
-      if (val) {
-        this.props.mutate({
-          mutation: TodoMutation,
-          variables: { title: val },
-          update: (proxy, { data: { addTodo } }) => {
-            // Read the data from our cache for this query.
-            const data = proxy.readQuery({ query: TodoListQuery });
-            // Add our todo from the mutation to the end.
-            data.todoList.push(addTodo);
-            // Write our data back to the cache.
-            proxy.writeQuery({ query: TodoListQuery, data });
-          },
-        });
-        this.setState(() => ({ newTodo: '' }));
-      }
+const onTodoChange = ({ changeTodo }) => ({ target }) => {
+  changeTodo(target.value);
+};
+
+const onTodoKeyDown = ({ mutate, newTodo, changeTodo }) => event => {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    const val = newTodo.trim();
+
+    if (val) {
+      mutate({
+        mutation: TodoMutation,
+        variables: { title: val },
+        update: (proxy, { data: { addTodo } }) => {
+          // Read the data from our cache for this query.
+          const data = proxy.readQuery({ query: TodoListQuery });
+          // Add our todo from the mutation to the end.
+          data.todoList.push(addTodo);
+          // Write our data back to the cache.
+          proxy.writeQuery({ query: TodoListQuery, data });
+        },
+      });
+      changeTodo('');
     }
   }
+};
 
-  handleChange = event => {
-    this.setState({ newTodo: event.target.value });
-  }
-
-  render() {
-    return (
-      <NewTodoInput
-        placeholder="What needs to be done?"
-        onKeyDown={this.handleNewTodoKeyDown}
-        onChange={this.handleChange}
-        autoFocus
-        value={this.state.newTodo}
-      />
-    );
-  }
-}
-
-export default graphql(TodoMutation)(NewTodo);
+export default compose(
+  graphql(TodoMutation),
+  withStateHandlers({ newTodo: '' }, { changeTodo }),
+  withHandlers({ onTodoChange, onTodoKeyDown })
+)(NewTodo);

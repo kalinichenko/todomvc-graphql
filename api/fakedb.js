@@ -1,3 +1,8 @@
+import {
+  findIndex,
+  find,
+} from 'lodash';
+
 const todos = [];
 
 const s4 = () => {
@@ -21,8 +26,15 @@ export const addTodo = (title) => {
 };
 
 export const removeTodo = (id) => {
-  todos.splice(id, 1);
+  const index = findIndex(todos, item => item.id === id);
+  todos.splice(index, 1);
   return todos;
+};
+
+export const toggleTodo = (id, completed) => {
+  const todo = find(todos, item => item.id === id);
+  todo.completed = completed;
+  return todo;
 };
 
 export default todos;

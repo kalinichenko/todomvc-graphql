@@ -3,10 +3,11 @@ import {
   GraphQLString,
   GraphQLObjectType,
   GraphQLList,
+  GraphQLBoolean,
 } from 'graphql';
 
 import { TodoList } from './todolist';
-import { addTodo, removeTodo } from './fakedb';
+import { addTodo, removeTodo, toggleTodo } from './fakedb';
 
 export default new GraphQLObjectType({
   name: 'TodoMutation',
@@ -27,6 +28,16 @@ export default new GraphQLObjectType({
       },
       resolve: (_, { id }) => {
         return removeTodo(id);
+      },
+    },
+    toggleTodo: {
+      type: TodoList,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        completed: { type: new GraphQLNonNull(GraphQLBoolean) },
+      },
+      resolve: (_, { id, completed }) => {
+        return toggleTodo(id, completed);
       },
     },
   },
