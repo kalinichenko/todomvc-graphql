@@ -1,8 +1,8 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import styled from 'styled-components';
-import { map, filter, flow } from 'lodash/fp';
-import { withProps } from 'recompose';
+import { map, filter, flow, get } from 'lodash/fp';
+import { withProps, branch, compose, renderComponent } from 'recompose';
 
 import NewTodo from './NewTodo';
 import Todo from './Todo';
@@ -38,18 +38,15 @@ const Footer = styled.div`
   padding: 12px 0;
 `;
 
-const AppContainer = () => (
-  <Query query={TodoListQuery}>
-    {({ loading, error, data }) => {
-      if (loading) return <div>Loading...</div>;
-      if (error) return <div>Error :(</div>;
-      return (
-        <App data={data} />
-      );
-    }}
-  </Query>
+const loading = isLoading => branch(
+  isLoading,
+  renderComponent(() => <div>Loading...</div>),
 );
 
+const error = isError => branch(
+  isError,
+  renderComponent(() => <div>Error :(</div>),
+);
 
 const filterTodos = withProps(({ data }) => {
   const todos = flow(
@@ -59,13 +56,12 @@ const filterTodos = withProps(({ data }) => {
       (data.filterBy.selectedFilter === FILTER_ACTIVE && !todo.completed);
     }),
     map(todo => <Todo key={todo.id} {...todo} />),
-  )(data.todoList);
+  )(get('todoList', data));
 
   return { todos };
 });
 
-
-const App = filterTodos(({ todos }) => (
+const Main = ({ todos }) => (
   <React.Fragment>
     <header>
       <Title>todos</Title>
@@ -78,7 +74,16 @@ const App = filterTodos(({ todos }) => (
       <Filter />
     </Footer>
   </React.Fragment>
-));
+);
 
+const App = compose(
+  error(({ error }) => !!error),
+  loading(({ loading }) => !!loading),
+  filterTodos,
+)(Main);
 
-export default AppContainer;
+export default () => (
+  <Query query={TodoListQuery}>
+    { props => <App {...props} /> }
+  </Query>
+);
