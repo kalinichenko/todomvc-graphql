@@ -22,6 +22,11 @@ const TodoLabel = styled.label`
   line-height: 1.2;
 `;
 
+const CompletedLabel = TodoLabel.extend`
+  color: #d9d9d9;
+  text-decoration: line-through;
+`;
+
 const RemoveButton = styled.button`
   outline: none;
   display: none;
@@ -106,7 +111,10 @@ const Todo = ({
       defaultChecked={completed}
       onClick={onToggle}
     />
-    <TodoLabel>{title}</TodoLabel>
+    {completed ?
+      <CompletedLabel>{title}</CompletedLabel> :
+      <TodoLabel>{title}</TodoLabel>
+    }
     <RemoveButton onClick={onRemove}/>
   </TodoItem>
 );

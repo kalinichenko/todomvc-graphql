@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 
 export const TodoListQuery = gql`
   query {
@@ -6,6 +6,9 @@ export const TodoListQuery = gql`
       id
       title
       completed
+    }
+    filterBy @client {
+      selectedFilter
     }
   }
 `;

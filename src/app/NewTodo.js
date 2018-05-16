@@ -71,5 +71,5 @@ const onTodoKeyDown = ({ mutate, newTodo, changeTodo }) => event => {
 export default compose(
   graphql(TodoMutation),
   withStateHandlers({ newTodo: '' }, { changeTodo }),
-  withHandlers({ onTodoChange, onTodoKeyDown })
+  withHandlers({ onTodoChange, onTodoKeyDown }),
 )(NewTodo);

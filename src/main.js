@@ -1,10 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import ApolloClient from 'apollo-boost';
+import { ApolloClient } from 'apollo-client';
 import { ApolloProvider } from 'react-apollo';
-import App from './app/App';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { withClientState } from 'apollo-link-state';
+import { ApolloLink } from 'apollo-link';
+import { HttpLink } from 'apollo-link-http';
 import { injectGlobal } from 'styled-components';
+
+import App from './app/App';
+import { resolvers, defaults } from './resolvers';
+
 
 const global = injectGlobal`
   body {
@@ -19,7 +26,22 @@ const global = injectGlobal`
   }
 `;
 
-const client = new ApolloClient();
+const typeDefs = `
+`;
+
+const cache = new InMemoryCache();
+
+const stateLink = withClientState({
+  resolvers,
+  cache,
+  defaults,
+  typeDefs,
+});
+
+const client = new ApolloClient({
+  cache,
+  link: ApolloLink.from([stateLink, new HttpLink()]),
+});
 
 const render = (Component) => ReactDOM.render(
   <AppContainer>
